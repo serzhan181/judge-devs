@@ -73,7 +73,11 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
               ))}
             </>
           ) : (
-            isLoading && <Spinner />
+            isLoading && (
+              <Flex justifyContent="center">
+                <Spinner />
+              </Flex>
+            )
           )}
 
           {/* No projects found */}

@@ -97,7 +97,12 @@ export const Search = () => {
             />
 
             <InputRightElement p={3}>
-              <IconButton type="submit" size="sm" aria-label={"search"}>
+              <IconButton
+                colorScheme="teal"
+                type="submit"
+                size="sm"
+                aria-label={"search"}
+              >
                 <SearchIcon size={18} />
               </IconButton>
             </InputRightElement>

@@ -33,7 +33,7 @@ export const Card: FC<CardProps> = ({
       direction={{ base: "column", sm: "row" }}
       overflow="hidden"
       variant="outline"
-      backgroundColor="gray.900"
+      backgroundColor="blackAlpha.500"
     >
       <Image src={imageSrc} alt={name} width={200} height={200} />
 

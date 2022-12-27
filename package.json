@@ -22,6 +22,7 @@
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
     "backblaze-b2": "^1.7.0",
+    "chakra-ui-markdown-renderer": "^4.1.0",
     "dayjs": "^1.11.7",
     "framer-motion": "^8.0.2",
     "jotai": "^1.12.0",
@@ -33,6 +34,8 @@
     "react-dom": "18.2.0",
     "react-feather": "^2.0.10",
     "react-hook-form": "^7.41.1",
+    "react-markdown": "^8.0.4",
+    "remark-gfm": "^3.0.1",
     "superjson": "1.9.1",
     "zod": "^3.18.0"
   },
