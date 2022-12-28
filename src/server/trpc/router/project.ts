@@ -153,9 +153,14 @@ export const projectRouter = router({
         userRate = rated ? rated.value : null;
       }
 
+      const totalRatingCount = await prisma.rating.count({
+        where: { projectId: input.id },
+      });
+
       return {
         ...project,
         userRate,
+        totalRatingCount,
       };
     }),
 

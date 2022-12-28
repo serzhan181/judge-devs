@@ -2,8 +2,8 @@ import type { FC } from "react";
 import { useIntersection } from "@/src/hooks/use-intersection";
 import { trpc } from "../utils/trpc";
 import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
-import { RoundedImage } from "./rounded-image";
-import { StyledNextLink } from "./styled-next-link";
+import { RoundedImage } from "../atoms/rounded-image";
+import { StyledNextLink } from "../atoms/styled-next-link";
 import { fromNow } from "../utils/fromNow";
 
 type CommentsProps = { projectId: string };
@@ -33,6 +33,11 @@ export const Comments: FC<CommentsProps> = ({ projectId }) => {
       ) : (
         thereAreComments && (
           <>
+            <Box>
+              <Text color="gray">
+                {comments.data?.totalCommentsCount} comments
+              </Text>
+            </Box>
             {usersComments.map((c) => (
               <Comment
                 key={c.id}

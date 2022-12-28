@@ -44,7 +44,11 @@ export const commentRouter = router({
         });
       }
 
-      return { comments, usersComments };
+      const totalCommentsCount = await prisma.comment.count({
+        where: { projectId: input.projectId },
+      });
+
+      return { comments, usersComments, totalCommentsCount };
     }),
 
   onProject: protectedProcedure

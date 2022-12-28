@@ -62,6 +62,7 @@ export const SubmitComment: FC<SubmitCommentProps> = ({
         return {
           usersComments: [newComment, ...(old?.usersComments || [])],
           comments: old?.comments || [],
+          totalCommentsCount: (old?.totalCommentsCount || 0) + 1,
         };
       });
 

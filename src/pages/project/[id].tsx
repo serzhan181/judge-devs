@@ -7,7 +7,7 @@ import {
   IconButton,
   Text,
   Link as ChakraLink,
-  theme,
+  Tag,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -22,7 +22,8 @@ import { Minimize2, Maximize2, ExternalLink, Star } from "react-feather";
 import Image from "next/image";
 import { SubmitComment } from "@/src/components/submit-comment";
 import { useSession } from "next-auth/react";
-import { Comments } from "@/src/atoms/comments";
+import { Comments } from "@/src/components/comments";
+import { RateProject, useRateProject } from "@/src/components/rate-project";
 
 const Project = () => {
   const router = useRouter();
@@ -32,6 +33,8 @@ const Project = () => {
   const { data: project, isLoading } = trpc.project.getProjectById.useQuery({
     id: projectId,
   });
+
+  const { rating, onRate } = useRateProject(project?.userRate);
 
   return (
     <>
@@ -59,15 +62,22 @@ const Project = () => {
                   <Heading>{project.name}</Heading>
 
                   {project.average_rating && (
-                    <Flex gap={1} alignItems="center">
-                      <Star
-                        color={theme.colors.yellow[500]}
-                        fill={theme.colors.yellow[500]}
-                        size={30}
-                      />
-                      <Text fontSize="2xl" as="span">
-                        {project.average_rating}
+                    <Flex gap={2} alignItems="center">
+                      <Divider orientation="vertical" />
+                      <Flex gap={1} alignItems="center">
+                        <Star color="#ddb231" fill="#ddb231" size={30} />
+                        <Text fontSize="2xl" as="span">
+                          {project.average_rating}
+                        </Text>
+                      </Flex>
+
+                      <Divider orientation="vertical" />
+
+                      <Text fontSize="2xl">
+                        Rated {project.totalRatingCount} times
                       </Text>
+
+                      <Divider orientation="vertical" />
                     </Flex>
                   )}
                 </Flex>
@@ -100,6 +110,17 @@ const Project = () => {
           </Flex>
         )}
 
+        {/* Suggest User to rate */}
+        <Flex alignItems="center" gap={2} flexDir="column">
+          <Tag>Rate the project!</Tag>
+          <Flex>
+            <RateProject
+              rating={rating}
+              onRate={(rated) => onRate(rated, projectId)}
+            />
+          </Flex>
+        </Flex>
+
         {/* Project's Comments */}
         <Flex mt={4} gap={8} bgColor="blackAlpha.500" p={2} flexDir="column">
           <SubmitComment
@@ -119,6 +140,7 @@ const Project = () => {
 type MetaDataProps = {
   creatorImage: string | null;
   creatorName: string | null;
+
   createdAt: Date;
 };
 
@@ -138,9 +160,11 @@ const MetaData: FC<MetaDataProps> = ({
         />
         <StyledNextLink href="/user/42">u/{creatorName}</StyledNextLink>
       </Flex>
+
       <Text color="gray" as="span">
         &#8226;
       </Text>
+
       <Text color="gray">{fromNow(createdAt)}</Text>
     </Flex>
   );
@@ -161,7 +185,7 @@ const Description: FC<DescriptionProps> = ({ description }) => {
       p={3}
       borderRadius="md"
       bgColor="whiteAlpha.100"
-      maxH={expanded ? "100%" : "180px"}
+      maxH={expanded ? "100%" : "328px"}
       overflow={expanded ? "visible" : "hidden"}
       _after={{
         display: expanded ? "none" : "block",
