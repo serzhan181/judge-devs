@@ -21,11 +21,15 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
     "sort-by",
     "newest"
   );
+  const [sortOrder, setSortOrder] = useLocalStorage<"desc" | "asc">(
+    "sort-order",
+    "desc"
+  );
 
   const { search = "" } = router.query;
 
   const { data: projects, isLoading } = trpc.project.getAll.useQuery(
-    { sort: { by: sortBy, order: "desc" }, searchTerm: search as string },
+    { sort: { by: sortBy, order: sortOrder }, searchTerm: search as string },
     {
       refetchOnWindowFocus: false,
     }
@@ -47,7 +51,10 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
           <Flex w="xs" bgColor="teal.500" borderRadius="md">
             <SortAllProjectsTabs
               defaultSortBy={sortBy}
-              onSortByChange={(sortBy) => setSortBy(sortBy)}
+              onSortByChange={(sortBy, sortOrder) => {
+                setSortBy(sortBy);
+                setSortOrder(sortOrder);
+              }}
             />
           </Flex>
 

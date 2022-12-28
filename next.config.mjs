@@ -19,7 +19,11 @@ const config = {
   },
 
   images: {
-    domains: ["f004.backblazeb2.com", "avatars.githubusercontent.com"],
+    domains: [
+      "f004.backblazeb2.com",
+      "avatars.githubusercontent.com",
+      "cdn.discordapp.com",
+    ],
   },
 };
 export default config;

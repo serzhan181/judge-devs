@@ -1,17 +1,23 @@
 import { Flex, Select, Text } from "@chakra-ui/react";
 import type { FC } from "react";
 
-const SORT_OPTIONS = [
-  { label: "Newest", value: "newest" },
-  { label: "Most rated", value: "rating" },
-  { label: "Discussed", value: "discussed" },
+interface SortOption {
+  label: string;
+  value: SortByOptions;
+  order: "desc" | "asc";
+}
+
+const SORT_OPTIONS: SortOption[] = [
+  { label: "Newest", value: "newest", order: "desc" },
+  { label: "High rating", value: "rating", order: "asc" },
+  { label: "Discussed", value: "discussed", order: "desc" },
 ];
 
 export type SortByOptions = "rating" | "newest" | "discussed";
 
 type SortAllProjectsSelectProps = {
   defaultSortBy: SortByOptions;
-  onSortByChange: (sortBy: SortByOptions) => void;
+  onSortByChange: (sortBy: SortByOptions, sortOrder: "desc" | "asc") => void;
 };
 
 export const SortAllProjectsTabs: FC<SortAllProjectsSelectProps> = ({
@@ -35,7 +41,11 @@ export const SortAllProjectsTabs: FC<SortAllProjectsSelectProps> = ({
           onChange={(e) => {
             e.preventDefault();
 
-            onSortByChange(e.target.value as SortByOptions);
+            const sortBy = e.target.value as SortByOptions;
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const selected = SORT_OPTIONS.find((o) => o.value === sortBy)!;
+
+            onSortByChange(sortBy, selected.order);
           }}
         >
           {SORT_OPTIONS.map((o) => (
