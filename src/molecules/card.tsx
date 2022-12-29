@@ -9,6 +9,7 @@ import type { FC } from "react";
 import Image from "next/image";
 import { Hashtag } from "../atoms/hashtag";
 import { StyledNextLink } from "../atoms/styled-next-link";
+import { useRouter } from "next/router";
 
 type CardProps = {
   name: string;
@@ -28,6 +29,8 @@ export const Card: FC<CardProps> = ({
   hashtags,
   id,
 }) => {
+  const router = useRouter();
+
   return (
     <ChakraCard
       direction={{ base: "column", sm: "row" }}
@@ -48,7 +51,18 @@ export const Card: FC<CardProps> = ({
 
         <CardFooter gap={1}>
           {hashtags.map((h) => (
-            <Hashtag key={h.id} text={h.name} />
+            <Hashtag
+              key={h.id}
+              text={h.name}
+              cursor="pointer"
+              onClick={() =>
+                router.push({
+                  query: {
+                    search: `#${h.name}`,
+                  },
+                })
+              }
+            />
           ))}
         </CardFooter>
       </Stack>
