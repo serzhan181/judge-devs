@@ -18,6 +18,7 @@ import { signOut, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useSetAtom } from "jotai";
 import { authModal } from "../store/modals";
+import { useRouter } from "next/router";
 
 const AuthorizeModal = dynamic(() =>
   import("@/src/modals/authorize-modal").then((c) => c.AuthorizeModal)
@@ -55,7 +56,7 @@ export const Header = () => {
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
-            <Authorize />
+            <Actions />
           </Flex>
         </Flex>
       </Box>
@@ -63,24 +64,27 @@ export const Header = () => {
   );
 };
 
-const Authorize = () => {
+const Actions = () => {
   const session = useSession();
-
   const setAuthModal = useSetAtom(authModal);
+  const router = useRouter();
 
   return (
     <>
       {session.data?.user ? (
         <>
-          <Button
-            variant={"solid"}
-            colorScheme={"teal"}
-            size={"sm"}
-            mr={4}
-            leftIcon={<Plus size={15} />}
-          >
-            project
-          </Button>
+          {router.pathname !== "/new" && (
+            <Button
+              variant={"solid"}
+              colorScheme={"teal"}
+              size={"sm"}
+              mr={4}
+              leftIcon={<Plus size={15} />}
+              onClick={() => router.push("/new")}
+            >
+              project
+            </Button>
+          )}
           <Menu>
             <MenuButton
               as={Button}
