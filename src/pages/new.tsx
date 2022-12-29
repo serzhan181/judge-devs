@@ -68,20 +68,26 @@ const NewProject = () => {
   const createProject = trpc.project.createProject.useMutation();
 
   const onSubmit = async (data: CreateProjectForm) => {
-    //   const loadingToastId = toast.loading("Creating your project...");
+    const loadingId = toast({
+      status: "loading",
+      description: "Creating your post...",
+      position: "top-left",
+    });
 
     createProject.mutate(data, {
       onError(err) {
         console.log("something went wrong", err);
-        //   toast.error("Something went wrong...", {
-        //     id: loadingToastId,
-        //   });
+        toast.update(loadingId, {
+          status: "error",
+          description: "Something went wrong :(",
+        });
       },
 
       onSuccess() {
-        //   toast.success("Project created!", {
-        //     id: loadingToastId,
-        //   });
+        toast.update(loadingId, {
+          status: "success",
+          description: "Your post has been created!",
+        });
         router.push("/");
       },
     });
