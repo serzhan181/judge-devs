@@ -75,14 +75,27 @@ const Actions = () => {
         <>
           {router.pathname !== "/new" && (
             <Button
-              variant={"solid"}
-              colorScheme={"teal"}
-              size={"sm"}
+              variant="solid"
+              colorScheme="teal"
+              size="sm"
               mr={4}
               leftIcon={<Plus size={15} />}
               onClick={() => router.push("/new")}
             >
               project
+            </Button>
+          )}
+
+          {router.pathname !== "/inspiration/new" && (
+            <Button
+              variant="outline"
+              colorScheme="teal"
+              size="sm"
+              mr={4}
+              leftIcon={<Plus size={15} />}
+              onClick={() => router.push("/inspiration/new")}
+            >
+              inspiration
             </Button>
           )}
           <Menu>

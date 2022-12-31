@@ -1,29 +1,28 @@
 import { DefaultLayout } from "@/src/layouts/default";
 import {
-  Box,
   Divider,
   Flex,
   Heading,
-  IconButton,
   Text,
   Link as ChakraLink,
   Tag,
+  Button,
+  Highlight,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { trpc } from "@/src/utils/trpc";
-import { fromNow } from "@/src/utils/fromNow";
-import { StyledNextLink } from "@/src/atoms/styled-next-link";
-import { RoundedImage } from "@/src/atoms/rounded-image";
 import type { FC } from "react";
-import { useState } from "react";
-import { RenderMarkdown } from "@/src/molecules/render-markdown";
-import { Minimize2, Maximize2, ExternalLink, Star } from "react-feather";
+import { ExternalLink, Star } from "react-feather";
 import Image from "next/image";
 import { SubmitComment } from "@/src/components/submit-comment";
 import { useSession } from "next-auth/react";
 import { Comments } from "@/src/components/comments";
 import { RateProject, useRateProject } from "@/src/components/rate-project";
+import { Description } from "@/src/molecules/description";
+import { MetaData } from "@/src/molecules/meta-data";
+import { StyledNextLink } from "@/src/atoms/styled-next-link";
+import Link from "next/link";
 
 const Project = () => {
   const router = useRouter();
@@ -82,6 +81,23 @@ const Project = () => {
                   )}
                 </Flex>
 
+                {project.inspired && (
+                  <Flex my="2">
+                    <Link href={`/inspiration/${project.inspired.id}`}>
+                      <Highlight
+                        query={project.inspired.name}
+                        styles={{
+                          p: "1",
+                          rounded: "full",
+                          bg: "red.100",
+                        }}
+                      >
+                        {"Inspired by: " + project.inspired.name}
+                      </Highlight>
+                    </Link>
+                  </Flex>
+                )}
+
                 {project.description && (
                   <Description description={project.description} />
                 )}
@@ -134,91 +150,6 @@ const Project = () => {
         </Flex>
       </DefaultLayout>
     </>
-  );
-};
-
-type MetaDataProps = {
-  creatorImage: string | null;
-  creatorName: string | null;
-
-  createdAt: Date;
-};
-
-const MetaData: FC<MetaDataProps> = ({
-  creatorName,
-  creatorImage,
-  createdAt,
-}) => {
-  return (
-    <Flex gap={2}>
-      <Flex color="gray" gap={2}>
-        <RoundedImage
-          src={creatorImage || "/static/images/user-placeholder.png"}
-          width={25}
-          height={25}
-          alt={"creator"}
-        />
-        <StyledNextLink href="/user/42">u/{creatorName}</StyledNextLink>
-      </Flex>
-
-      <Text color="gray" as="span">
-        &#8226;
-      </Text>
-
-      <Text color="gray">{fromNow(createdAt)}</Text>
-    </Flex>
-  );
-};
-
-type DescriptionProps = {
-  description: string;
-};
-
-const Description: FC<DescriptionProps> = ({ description }) => {
-  const [expanded, setExpanded] = useState<boolean>(true);
-
-  return (
-    <Box
-      position="relative"
-      border="2px solid"
-      borderColor="blackAlpha.500"
-      p={3}
-      borderRadius="md"
-      bgColor="whiteAlpha.100"
-      maxH={expanded ? "100%" : "328px"}
-      overflow={expanded ? "visible" : "hidden"}
-      _after={{
-        display: expanded ? "none" : "block",
-
-        content: '""',
-        position: "absolute",
-
-        right: "0",
-        left: "0",
-        bottom: "0",
-        height: 100,
-
-        background: "linear-gradient(to bottom, transparent, #1f1f1f)",
-      }}
-    >
-      <Flex justifyContent="space-between" alignItems="center">
-        <Text fontWeight="semibold">ABOUT</Text>
-        <IconButton
-          size="sm"
-          aria-label={"maximize-minimize"}
-          icon={expanded ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
-          onClick={() => {
-            setExpanded((prev) => !prev);
-          }}
-        />
-      </Flex>
-
-      <Divider my={2} />
-
-      <Box>
-        <RenderMarkdown markdown={description} />
-      </Box>
-    </Box>
   );
 };
 

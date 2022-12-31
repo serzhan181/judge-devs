@@ -54,9 +54,11 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  projects Project[]
-  comments Comment[]
-  ratings  Rating[]  @ignore
+  projects          Project[]
+  comments          Comment[]
+  ratings           Rating[]      @ignore
+  suggestedFeatures Feature[]     @ignore
+  inspirations      Inspiration[]
 }
 
 model VerificationToken {
@@ -65,27 +67,6 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model Project {
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  id              String  @id @default(cuid())
-  userId          String
-  user            User    @relation(fields: [userId], references: [id])
-  name            String
-  description     String?
-  source_code_url String
-  live_demo_url   String?
-
-  image          String?
-  average_rating Float?
-
-  ratings Rating[]
-
-  hashtags Hashtag[]
-  comments Comment[]
 }
 
 model Comment {
@@ -121,4 +102,51 @@ model Hashtag {
 
   name     String    @unique
   projects Project[]
+}
+
+model Project {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  id              String  @id @default(cuid())
+  userId          String
+  user            User    @relation(fields: [userId], references: [id])
+  name            String
+  description     String?
+  source_code_url String
+  live_demo_url   String?
+
+  image          String?
+  average_rating Float?
+
+  ratings Rating[]
+
+  hashtags Hashtag[]
+  comments Comment[]
+
+  inspiredId String?
+  inspired   Inspiration? @relation(fields: [inspiredId], references: [id])
+}
+
+model Inspiration {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  name        String
+  description String
+
+  implemented Project[]
+}
+
+model Feature {
+  id String @id @default(cuid())
+
+  name             String
+  shortDescription String @db.VarChar(160)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }

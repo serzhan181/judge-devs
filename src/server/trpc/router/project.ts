@@ -24,11 +24,13 @@ export const projectRouter = router({
             ext: z.string(),
           })
           .optional(),
+
+        inspiredById: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       let image = null;
-      const populate = { ...input, hashtags: undefined };
+      const { name, description, source_code_url, live_demo_url } = input;
 
       if (input.image) {
         await bucket.init();
@@ -38,7 +40,16 @@ export const projectRouter = router({
 
       const project = await prisma?.project.create({
         data: {
-          ...populate,
+          name,
+          description,
+          source_code_url,
+          live_demo_url,
+
+          inspired: {
+            connect: input.inspiredById
+              ? { id: input.inspiredById }
+              : undefined,
+          },
 
           image,
 
@@ -129,6 +140,13 @@ export const projectRouter = router({
               name: true,
               id: true,
               image: true,
+            },
+          },
+
+          inspired: {
+            select: {
+              name: true,
+              id: true,
             },
           },
         },

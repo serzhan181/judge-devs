@@ -1,29 +1,19 @@
-import type { InputProps } from "@chakra-ui/react";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
-  forwardRef,
-  InputGroup,
-  InputLeftAddon,
   useToast,
 } from "@chakra-ui/react";
-import {
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  Heading,
-  Input,
-} from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import type { FC } from "react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import type { ReactElement } from "react-markdown/lib/react-markdown";
 import { z } from "zod";
 import { RoundedImage } from "../atoms/rounded-image";
 import { HashtagsSelect } from "../components/hashtags-select";
@@ -33,6 +23,8 @@ import { Editor } from "../molecules/editor";
 import { protectRouteSSR } from "../utils/protectRouteSSR";
 import { trpc } from "../utils/trpc";
 import { getBase64 } from "../utils/get-base-64";
+import { FormInput } from "@/src/atoms/form-input";
+import { StyledNextLink } from "../atoms/styled-next-link";
 
 const FormSchema = z.object({
   name: z.string().min(5),
@@ -54,6 +46,26 @@ type CreateProjectForm = z.infer<typeof FormSchema>;
 const NewProject = () => {
   const router = useRouter();
   const toast = useToast();
+  const inspired_by = (router.query.inspired_by as string) || "";
+
+  const {
+    data: inspired,
+    isError,
+    isLoading,
+  } = trpc.inspiration.getByIdShort.useQuery(
+    { id: inspired_by },
+    {
+      enabled: Boolean(inspired_by),
+    }
+  );
+
+  if (isError) {
+    toast({
+      status: "error",
+      title: "Error!",
+      description: "Couldn't find inspiration!",
+    });
+  }
 
   // Handle Image ***********
   const { setFileUrl, setFile, handlePreviewImg, file, fileUrl } =
@@ -100,6 +112,8 @@ const NewProject = () => {
               ext: file.name.split(".").pop() as string,
             }
           : undefined,
+
+        inspiredById: inspired?.id,
       },
       {
         onError(err) {
@@ -128,6 +142,39 @@ const NewProject = () => {
       </Head>
 
       <DefaultLayout>
+        {/* -------- Inspired -------- */}
+        {inspired_by && (
+          <>
+            {isLoading && (
+              <Alert status="loading" borderRadius="sm">
+                <AlertIcon />
+              </Alert>
+            )}
+
+            {inspired && (
+              <Alert status="success" borderRadius="sm">
+                <AlertIcon />
+
+                <Box>
+                  <AlertTitle>
+                    <StyledNextLink
+                      href={`/inspiration/${inspired.id}`}
+                      target="_blank"
+                    >
+                      {inspired.name}
+                    </StyledNextLink>
+                  </AlertTitle>
+
+                  <AlertDescription>
+                    Project will be linked with inspiration!
+                  </AlertDescription>
+                </Box>
+              </Alert>
+            )}
+          </>
+        )}
+        {/* -------- Inspired -------- */}
+
         <Heading>Share your project</Heading>
 
         <Flex
@@ -275,32 +322,6 @@ const NewProject = () => {
     </>
   );
 };
-
-type FormInputProps = {
-  label?: string;
-  helperText?: string;
-  isError?: boolean;
-  leftElement?: ReactElement;
-} & InputProps;
-
-const FormInput: FC<FormInputProps> = forwardRef<FormInputProps, "input">(
-  ({ label, helperText, isError, isRequired, leftElement, ...rest }, ref) => (
-    <FormControl isInvalid={isError} isRequired={isRequired}>
-      {label && <FormLabel>{label}</FormLabel>}
-      <InputGroup>
-        {leftElement && <InputLeftAddon>{leftElement}</InputLeftAddon>}
-
-        <Input {...rest} ref={ref} />
-      </InputGroup>
-
-      {helperText && isError ? (
-        <FormErrorMessage>{helperText}</FormErrorMessage>
-      ) : (
-        <FormHelperText>{helperText}</FormHelperText>
-      )}
-    </FormControl>
-  )
-);
 
 const fetchReadmeFromRepo = async (
   githubUrl: string,

@@ -1,3 +1,4 @@
+import { inspirationRouter } from "./inspiration";
 import { hashtagRouter } from "./hashtag";
 import { projectRouter } from "./project";
 import { router } from "../trpc";
@@ -7,6 +8,7 @@ export const appRouter = router({
   project: projectRouter,
   hashtag: hashtagRouter,
   comment: commentRouter,
+  inspiration: inspirationRouter,
 });
 
 // export type definition of API
