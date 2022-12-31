@@ -39,8 +39,7 @@
     "remark-gfm": "^3.0.1",
     "sanitize-html": "^2.8.1",
     "superjson": "1.9.1",
-    "zod": "^3.18.0",
-    "zod-form-data": "^1.2.4"
+    "zod": "^3.18.0"
   },
   "devDependencies": {
     "@types/backblaze-b2": "^1.5.2",
