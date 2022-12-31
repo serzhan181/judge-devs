@@ -1,3 +1,4 @@
+import { featuresRouter } from "./features";
 import { inspirationRouter } from "./inspiration";
 import { hashtagRouter } from "./hashtag";
 import { projectRouter } from "./project";
@@ -9,6 +10,7 @@ export const appRouter = router({
   hashtag: hashtagRouter,
   comment: commentRouter,
   inspiration: inspirationRouter,
+  feature: featuresRouter,
 });
 
 // export type definition of API

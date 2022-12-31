@@ -8,7 +8,7 @@ type MetaDataProps = {
   creatorImage: string | null;
   creatorName: string | null;
 
-  createdAt: Date;
+  createdAt?: Date;
 };
 
 export const MetaData: FC<MetaDataProps> = ({
@@ -27,12 +27,15 @@ export const MetaData: FC<MetaDataProps> = ({
         />
         <StyledNextLink href="/user/42">u/{creatorName}</StyledNextLink>
       </Flex>
+      {createdAt && (
+        <>
+          <Text color="gray" as="span">
+            &#8226;
+          </Text>
 
-      <Text color="gray" as="span">
-        &#8226;
-      </Text>
-
-      <Text color="gray">{fromNow(createdAt)}</Text>
+          <Text color="gray">{fromNow(createdAt)}</Text>
+        </>
+      )}
     </Flex>
   );
 };

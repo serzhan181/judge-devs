@@ -1,10 +1,10 @@
 import { StyledNextLink } from "@/src/atoms/styled-next-link";
+import { Features } from "@/src/components/features";
 import { DefaultLayout } from "@/src/layouts/default";
 import { Description } from "@/src/molecules/description";
 import { MetaData } from "@/src/molecules/meta-data";
 import { fromNow } from "@/src/utils/fromNow";
 import { trpc } from "@/src/utils/trpc";
-import type { ButtonProps } from "@chakra-ui/react";
 import {
   Flex,
   Heading,
@@ -17,10 +17,16 @@ import {
   Td,
   Tbody,
   Button,
+  SimpleGrid,
+  Card,
+  CardBody,
+  Badge,
+  Text,
+  Divider,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import type { FC } from "react";
+import { FC } from "react";
 
 const Inspiration = () => {
   const router = useRouter();
@@ -50,15 +56,21 @@ const Inspiration = () => {
               creatorName={data.user.name}
             />
 
-            <Flex justifyContent="space-between">
-              <Heading>{data.name}</Heading>
+            <SimpleGrid h="80" columns={2} spacing="3">
+              <Flex flexDir="column" gap="2">
+                <Flex justifyContent="space-between">
+                  <Heading>{data.name}</Heading>
 
-              <Button colorScheme="teal" onClick={redirectToImplementation}>
-                Implement 🎉
-              </Button>
-            </Flex>
+                  <Button colorScheme="teal" onClick={redirectToImplementation}>
+                    Implement 🎉
+                  </Button>
+                </Flex>
 
-            <Description description={data.description} />
+                <Description description={data.description} />
+              </Flex>
+
+              <Features inspirationId={data.id} />
+            </SimpleGrid>
 
             <Flex flexDir="column" gap="5">
               {data.implemented.length > 0 ? (

@@ -57,7 +57,7 @@ model User {
   projects          Project[]
   comments          Comment[]
   ratings           Rating[]      @ignore
-  suggestedFeatures Feature[]     @ignore
+  suggestedFeatures Feature[]
   inspirations      Inspiration[]
 }
 
@@ -139,6 +139,8 @@ model Inspiration {
   description String
 
   implemented Project[]
+
+  suggestedFeatures Feature[]
 }
 
 model Feature {
@@ -149,4 +151,7 @@ model Feature {
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  inspirationId String?
+  inspiration   Inspiration? @relation(fields: [inspirationId], references: [id])
 }
