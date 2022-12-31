@@ -1,5 +1,6 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import { z } from "zod";
 
 import { type Context } from "./context";
 
@@ -37,3 +38,21 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  * Protected procedure
  **/
 export const protectedProcedure = t.procedure.use(isAuthed);
+
+export const ownerProtectedProcedure = protectedProcedure
+  .input(z.object({ projectId: z.string() }))
+  .use(async ({ ctx, input, next }) => {
+    const project = await prisma?.project.findUnique({
+      where: { id: input.projectId },
+      select: { user: { select: { email: true } } },
+    });
+
+    if (ctx.session.user.email !== project?.user.email) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "User is not the owner of this project.",
+      });
+    }
+
+    return next();
+  });

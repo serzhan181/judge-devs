@@ -44,8 +44,6 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
     useInfiniteQuery(
       queryKey,
       async ({ pageParam }) => {
-        console.log(pageParam);
-
         const res = await trpcContext.project.getAll.fetch({
           sort: { by: sortBy, order: sortOrder },
           searchTerm: search as string,
@@ -60,8 +58,6 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
     );
 
   const { ref, isVisible } = useIntersection();
-
-  console.log(isVisible);
 
   useEffect(() => {
     if (isVisible && hasNextPage) {

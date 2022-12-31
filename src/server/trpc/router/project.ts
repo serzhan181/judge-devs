@@ -3,7 +3,7 @@ import { uploadImg } from "./../../../utils/upload-img";
 import { sortSearchTerm } from "./../../common/sort-search-term";
 import { computeAverageRating } from "./../../common/compute-average-rating";
 import { TRPCError } from "@trpc/server";
-import { publicProcedure } from "./../trpc";
+import { ownerProtectedProcedure, publicProcedure } from "./../trpc";
 import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 import { prisma } from "@/src/server/db/client";
@@ -297,4 +297,9 @@ export const projectRouter = router({
 
       return projects;
     }),
+
+  deleteById: ownerProtectedProcedure.mutation(async ({ input }) => {
+    await prisma.project.delete({ where: { id: input.projectId } });
+    return "deleted";
+  }),
 });
