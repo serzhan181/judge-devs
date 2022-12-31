@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const B2 = require("backblaze-b2");
-// import B2 from 'backblaze-b2';
+// import B2 from "backblaze-b2";
 import { env } from "../env/server.mjs";
 import { makeId } from "./makeId";
 
@@ -39,15 +39,6 @@ class Bucket {
       uploadUrl,
       uploadAuthToken: upload.data.authorizationToken,
     });
-
-    console.log(`
-      dev logs:
-      file: ${file},
-      uploadUrl: ${uploadUrl},
-      auth: ${upload.data.authorizationToken},
-      bucketId: ${env.BUCKET_ID}
-    `);
-
     console.log("file uploaded");
 
     return file.data.fileId;

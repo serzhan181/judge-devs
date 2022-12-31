@@ -28,9 +28,11 @@ import { z } from "zod";
 import { RoundedImage } from "../atoms/rounded-image";
 import { HashtagsSelect } from "../components/hashtags-select";
 import { DefaultLayout } from "../layouts/default";
+import { InputImage, useInputImg } from "../molecules/input-image";
 import { Editor } from "../molecules/editor";
 import { protectRouteSSR } from "../utils/protectRouteSSR";
 import { trpc } from "../utils/trpc";
+import { getBase64 } from "../utils/get-base-64";
 
 const FormSchema = z.object({
   name: z.string().min(5),
@@ -53,6 +55,16 @@ const NewProject = () => {
   const router = useRouter();
   const toast = useToast();
 
+  // Handle Image ***********
+  const { setFileUrl, setFile, handlePreviewImg, file, fileUrl } =
+    useInputImg();
+
+  const unselectImage = () => {
+    setFile(undefined);
+    setFileUrl("");
+  };
+  // Handle Image ***********
+
   const { control, handleSubmit, setValue } = useForm<CreateProjectForm>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -68,29 +80,45 @@ const NewProject = () => {
   const createProject = trpc.project.createProject.useMutation();
 
   const onSubmit = async (data: CreateProjectForm) => {
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file as Blob);
+    }
+
     const loadingId = toast({
       status: "loading",
       description: "Creating your post...",
       position: "top-left",
     });
 
-    createProject.mutate(data, {
-      onError(err) {
-        console.log("something went wrong", err);
-        toast.update(loadingId, {
-          status: "error",
-          description: "Something went wrong :(",
-        });
+    createProject.mutate(
+      {
+        ...data,
+        image: file
+          ? {
+              base64: (await getBase64(file)) as string,
+              ext: file.name.split(".").pop() as string,
+            }
+          : undefined,
       },
+      {
+        onError(err) {
+          console.log("something went wrong", err);
+          toast.update(loadingId, {
+            status: "error",
+            description: "Something went wrong :(",
+          });
+        },
 
-      onSuccess() {
-        toast.update(loadingId, {
-          status: "success",
-          description: "Your post has been created!",
-        });
-        router.push("/");
-      },
-    });
+        onSuccess() {
+          toast.update(loadingId, {
+            status: "success",
+            description: "Your post has been created!",
+          });
+          router.push("/");
+        },
+      }
+    );
   };
 
   return (
@@ -109,7 +137,7 @@ const NewProject = () => {
           flexDir="column"
           gap={2}
         >
-          <Box>
+          <Flex flexDir="column" gap={3}>
             <Controller
               control={control}
               name="name"
@@ -119,6 +147,37 @@ const NewProject = () => {
                   isRequired
                   isError={Boolean(fieldState.error)}
                   helperText={fieldState.error?.message}
+                  {...field}
+                />
+              )}
+            />
+
+            <Flex justifyContent="center">
+              <InputImage
+                onFileChange={(file) => {
+                  setFile(file);
+                  setFileUrl(handlePreviewImg(file));
+                }}
+                onUnselectImage={unselectImage}
+                previewUrl={fileUrl}
+              />
+            </Flex>
+
+            <Controller
+              control={control}
+              name="hashtags"
+              render={({ field }) => (
+                <HashtagsSelect onHashtagsSelect={field.onChange} />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="live_demo_url"
+              render={({ field }) => (
+                <FormInput
+                  label="live demo url"
+                  placeholder="https://"
                   {...field}
                 />
               )}
@@ -187,13 +246,13 @@ const NewProject = () => {
                         setValue("description", md);
                       }}
                     >
-                      Fetch from github
+                      Fetch README.md from the repo
                     </Button>
                   </Box>
                 </>
               )}
             />
-          </Box>
+          </Flex>
           <Controller
             control={control}
             name="description"
@@ -203,26 +262,6 @@ const NewProject = () => {
                 value={field.value || ""}
                 onChange={field.onChange}
               />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="live_demo_url"
-            render={({ field }) => (
-              <FormInput
-                label="live demo url"
-                placeholder="https://"
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="hashtags"
-            render={({ field }) => (
-              <HashtagsSelect onHashtagsSelect={field.onChange} />
             )}
           />
 

@@ -1,10 +1,9 @@
+import { bucket } from "./../../../utils/backblaze";
+import { uploadImg } from "./../../../utils/upload-img";
 import { sortSearchTerm } from "./../../common/sort-search-term";
 import { computeAverageRating } from "./../../common/compute-average-rating";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure } from "./../trpc";
-import { constructNativeImgUrl } from "./../../../utils/construct-native-img-url";
-import { takeScreenshotUrl } from "./../../../utils/take-screenshot-url";
-import { bucket } from "./../../../utils/backblaze";
 import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 import { prisma } from "@/src/server/db/client";
@@ -19,32 +18,30 @@ export const projectRouter = router({
         live_demo_url: z.string().optional(),
 
         hashtags: z.array(z.string()).optional(),
+        image: z
+          .object({
+            base64: z.string(),
+            ext: z.string(),
+          })
+          .optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       let image = null;
-
-      if (input?.live_demo_url?.length) {
-        await bucket.init();
-        const screenshot = await takeScreenshotUrl(input.live_demo_url);
-        const fileId = await bucket.uploadImage({
-          imageBuffer:
-            typeof screenshot === "string"
-              ? Buffer.from(screenshot, "base64")
-              : screenshot,
-          fileType: "webp",
-        });
-
-        image = constructNativeImgUrl(fileId);
-      }
-
       const populate = { ...input, hashtags: undefined };
+
+      if (input.image) {
+        await bucket.init();
+
+        image = await uploadImg(input.image.base64, input.image.ext);
+      }
 
       const project = await prisma?.project.create({
         data: {
           ...populate,
 
           image,
+
           user: {
             connect: {
               id: ctx.session.user.id,
