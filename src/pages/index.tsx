@@ -3,7 +3,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { appRouter } from "../server/trpc/router/_app";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { prisma } from "@/src/server/db/client";
 import superjson from "superjson";
 import { DefaultLayout } from "@/src/layouts/default";
 import {
@@ -15,7 +14,12 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import { ProjectsSection } from "../sections/projects";
-import { InspirationSection } from "../sections/inspirations";
+import { createContextInner } from "../server/trpc/context";
+import dynamic from "next/dynamic";
+
+const InspirationSection = dynamic(() =>
+  import("../sections/inspirations").then((c) => c.InspirationSection)
+);
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
   return (
@@ -31,7 +35,14 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
 
       <DefaultLayout>
         <Flex flexDir="column" minH="100vh" gap={2}>
-          <Tabs isFitted variant="enclosed-colored" colorScheme="teal">
+          <Tabs
+            defaultIndex={0}
+            isManual // Prevent fetching data
+            isLazy
+            isFitted
+            variant="enclosed-colored"
+            colorScheme="teal"
+          >
             <TabList>
               <Tab>Projects</Tab>
               <Tab>Insirations</Tab>
@@ -57,11 +68,13 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
 export const getStaticProps: GetStaticProps = async () => {
   const ssg = createProxySSGHelpers({
     router: appRouter,
-    ctx: { prisma, session: null },
+    ctx: await createContextInner({ session: null }),
     transformer: superjson,
   });
 
-  await ssg.project.getAll.prefetch({ sort: { by: "newest", order: "desc" } });
+  await ssg.project.getAll.prefetchInfinite({
+    sort: { by: "newest", order: "desc" },
+  });
 
   return {
     props: {

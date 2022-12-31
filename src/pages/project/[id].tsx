@@ -6,7 +6,6 @@ import {
   Text,
   Link as ChakraLink,
   Tag,
-  Button,
   Highlight,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -21,7 +20,6 @@ import { Comments } from "@/src/components/comments";
 import { RateProject, useRateProject } from "@/src/components/rate-project";
 import { Description } from "@/src/molecules/description";
 import { MetaData } from "@/src/molecules/meta-data";
-import { StyledNextLink } from "@/src/atoms/styled-next-link";
 import Link from "next/link";
 
 const Project = () => {

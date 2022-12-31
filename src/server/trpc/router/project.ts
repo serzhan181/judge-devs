@@ -238,16 +238,7 @@ export const projectRouter = router({
         skip: input?.cursor ? 1 : 0,
         // --- Pagination ---
 
-        include: {
-          user: {
-            select: {
-              name: true,
-            },
-          },
-
-          hashtags: { select: { name: true, id: true } },
-        },
-
+        // --- Sorting ---
         orderBy: sortQuery,
 
         where:
@@ -264,6 +255,22 @@ export const projectRouter = router({
                   : {},
               }
             : {},
+        // --- Sorting ---
+
+        // --- Selection ---
+        select: {
+          id: true,
+          image: true,
+          name: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+
+          hashtags: { select: { name: true, id: true } },
+        },
+        // --- Selection ---
       });
 
       const nextCursor =

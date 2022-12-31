@@ -1,9 +1,11 @@
 import { FormInput } from "@/src/atoms/form-input";
 import { DefaultLayout } from "@/src/layouts/default";
 import { Editor } from "@/src/molecules/editor";
+import { protectRouteSSR } from "@/src/utils/protectRouteSSR";
 import { trpc } from "@/src/utils/trpc";
 import { Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -107,3 +109,7 @@ const InspirationNew = () => {
 };
 
 export default InspirationNew;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return protectRouteSSR(context);
+};
