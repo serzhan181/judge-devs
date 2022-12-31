@@ -14,9 +14,15 @@ import { useLocalStorage } from "../hooks/use-local-storage";
 import type { SortByOptions } from "../components/sort-all-projects-tabs";
 import { SortAllProjectsTabs } from "../components/sort-all-projects-tabs";
 import type { FC } from "react";
+import { Fragment, useEffect } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useIntersection } from "../hooks/use-intersection";
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
   const router = useRouter();
+  const trpcContext = trpc.useContext();
+
+  // Sorting
   const [sortBy, setSortBy] = useLocalStorage<SortByOptions>(
     "sort-by",
     "newest"
@@ -26,14 +32,42 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
     "desc"
   );
 
+  // Search
   const { search = "" } = router.query;
 
-  const { data: projects, isLoading } = trpc.project.getAll.useQuery(
-    { sort: { by: sortBy, order: sortOrder }, searchTerm: search as string },
-    {
-      refetchOnWindowFocus: false,
+  const queryKey = trpc.project.getAll.getQueryKey({
+    sort: { by: sortBy, order: sortOrder },
+    searchTerm: search as string,
+  });
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery(
+      queryKey,
+      async ({ pageParam }) => {
+        console.log(pageParam);
+
+        const res = await trpcContext.project.getAll.fetch({
+          sort: { by: sortBy, order: sortOrder },
+          searchTerm: search as string,
+          cursor: pageParam,
+        });
+
+        return res;
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? false,
+      }
+    );
+
+  const { ref, isVisible } = useIntersection();
+
+  console.log(isVisible);
+
+  useEffect(() => {
+    if (isVisible && hasNextPage) {
+      fetchNextPage();
     }
-  );
+  }, [isVisible, hasNextPage, fetchNextPage]);
 
   return (
     <>
@@ -47,7 +81,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
       </Head>
 
       <DefaultLayout>
-        <Flex flexDir="column" gap={2}>
+        <Flex flexDir="column" minH="100vh" gap={2}>
           <Flex w="xs" bgColor="teal.500" borderRadius="md">
             <SortAllProjectsTabs
               defaultSortBy={sortBy}
@@ -58,42 +92,60 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
             />
           </Flex>
 
-          {projects?.length && !isLoading ? (
-            <>
-              {Boolean(search.length) && (
-                <SearchStatus
-                  label="Projects with: "
-                  searchText={search as string}
-                />
-              )}
-              {projects.map((p) => (
-                <Card
-                  key={p.id}
-                  imageSrc={
-                    p.image ? p.image : "/static/images/website-placeholder.jpg"
-                  }
-                  name={p.name}
-                  username={p.user.name || ""}
-                  hashtags={p.hashtags}
-                  id={p.id}
-                />
-              ))}
-            </>
-          ) : (
-            isLoading && (
-              <Flex justifyContent="center">
-                <Spinner />
-              </Flex>
-            )
-          )}
+          {data?.pages &&
+            data.pages.flatMap(({ projects, nextCursor }) => (
+              <Fragment key={nextCursor}>
+                {projects?.length && !isLoading ? (
+                  <>
+                    {Boolean(search.length) && (
+                      <SearchStatus
+                        label="Projects with: "
+                        searchText={search as string}
+                      />
+                    )}
+                    {projects.map((p) => (
+                      <Card
+                        key={p.id}
+                        imageSrc={
+                          p.image
+                            ? p.image
+                            : "/static/images/website-placeholder.jpg"
+                        }
+                        name={p.name}
+                        username={p.user.name || ""}
+                        hashtags={p.hashtags}
+                        id={p.id}
+                      />
+                    ))}
+                  </>
+                ) : (
+                  isLoading && (
+                    <Flex justifyContent="center">
+                      <Spinner />
+                    </Flex>
+                  )
+                )}
 
-          {/* No projects found */}
-          {!projects?.length && !isLoading && search.length && (
-            <SearchStatus
-              label="No projects with: "
-              searchText={search as string}
-            />
-          )}
+                {/* No projects found */}
+                {!projects?.length && !isLoading && search.length && (
+                  <SearchStatus
+                    label="No projects with: "
+                    searchText={search as string}
+                  />
+                )}
+              </Fragment>
+            ))}
+        </Flex>
+        <Flex
+          mx="auto"
+          mt="3"
+          justifyContent="center"
+          h="10"
+          position="relative"
+          bottom="0"
+          ref={ref}
+        >
+          {hasNextPage && isFetchingNextPage && <Spinner zIndex="overlay" />}
         </Flex>
       </DefaultLayout>
     </>

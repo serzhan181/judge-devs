@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 export const useIntersection = () => {
   const ref = useRef(null);
 
-  const [isVisible, setIsVisible] = useState<boolean>();
+  const [isVisible, setIsVisible] = useState<boolean | undefined>(false);
 
   useEffect(() => {
     const node = ref.current;

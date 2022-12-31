@@ -165,6 +165,7 @@ export const projectRouter = router({
     .input(
       z
         .object({
+          // Sorting query
           sort: z
             .object({
               by: z.enum(["rating", "newest", "discussed"]),
@@ -172,11 +173,20 @@ export const projectRouter = router({
             })
             .optional(),
 
+          // Searching query
           searchTerm: z.string().optional(),
+
+          // Pagination query
+          take: z.number().min(1).max(100).nullish(),
+          cursor: z.string().optional(),
         })
         .optional()
     )
     .query(async ({ input }) => {
+      // Pagination
+      const take = input?.take ?? 7;
+      const cursor = input?.cursor ? { id: input.cursor } : undefined;
+
       // Sorting
       let sortQuery = {};
       const order = input?.sort?.order || "asc";
@@ -203,7 +213,13 @@ export const projectRouter = router({
       // Search
       const { hashtags, searchText } = sortSearchTerm(input?.searchTerm || "");
 
-      return await prisma?.project.findMany({
+      const projects = await prisma?.project.findMany({
+        // --- Pagination ---
+        take,
+        cursor,
+        skip: input?.cursor ? 1 : 0,
+        // --- Pagination ---
+
         include: {
           user: {
             select: {
@@ -231,6 +247,11 @@ export const projectRouter = router({
               }
             : {},
       });
+
+      const nextCursor =
+        projects.length < take ? undefined : projects[take - 1]?.id;
+
+      return { projects, nextCursor };
     }),
 
   searchOptions: publicProcedure
