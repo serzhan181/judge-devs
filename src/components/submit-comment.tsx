@@ -71,6 +71,12 @@ export const SubmitComment: FC<SubmitCommentProps> = ({
   });
 
   const onSubmit = ({ comment }: CommentForm) => {
+    if (!session.data?.user) {
+      setIsAuthModalOpen(true);
+      setValue("comment", "");
+      return;
+    }
+
     createComment.mutate(
       { projectId, comment },
       {
@@ -116,14 +122,7 @@ export const SubmitComment: FC<SubmitCommentProps> = ({
         <Textarea
           {...register("comment")}
           placeholder="Enter your comment"
-          onFocus={() => {
-            if (!session.data?.user) {
-              setIsAuthModalOpen(true);
-              return;
-            }
-
-            setShowActions(true);
-          }}
+          onFocus={() => setShowActions(true)}
         />
       </Flex>
 
