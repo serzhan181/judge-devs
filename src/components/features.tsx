@@ -76,8 +76,6 @@ export const Features: FC<FeaturesProps> = ({ inspirationId }) => {
               initial={{ x: "100%" }}
               animate={{ x: "0" }}
               exit={{ x: "-100%", opacity: 0 }}
-              //   @ts-ignore // ? prop exists in chakra and framer motion.
-              transition={{ duration: 0.2 }}
               p="2"
             >
               <MoreInfo

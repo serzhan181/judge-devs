@@ -2,15 +2,24 @@ import {
   Box,
   Button,
   chakra,
+  Divider,
   Flex,
   Icon,
   IconButton,
+  Input,
+  Popover,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  Portal,
   shouldForwardProp,
   Text,
 } from "@chakra-ui/react";
 import type { FC } from "react";
 import { useState } from "react";
-import { ChevronDown, ChevronUp, X } from "react-feather";
+import { ChevronDown, ChevronUp, Plus, X } from "react-feather";
 import { AnimatePresence, isValidMotionProp, motion } from "framer-motion";
 
 export type Option = {
@@ -23,12 +32,15 @@ type MultiselectProps = {
   placeholder?: string;
 
   onMultiSelect: (options: Option[]) => void;
+
+  onNew: (value: string) => void;
 };
 
 export const Multiselect: FC<MultiselectProps> = ({
   options,
   onMultiSelect,
   placeholder = "select options",
+  onNew,
 }) => {
   const [selected, setSelected] = useState<Option[]>([]);
   const [showOptions, setShowOptions] = useState(false);
@@ -39,7 +51,7 @@ export const Multiselect: FC<MultiselectProps> = ({
       return;
     }
 
-    setSelected((prev) => {
+    setSelected((prev: Option[]) => {
       const newOptions = [...prev, o];
 
       onMultiSelect(newOptions);
@@ -116,44 +128,85 @@ export const Multiselect: FC<MultiselectProps> = ({
 
       {/* Options */}
       <AnimatePresence>
-        {showOptions && options.length && (
-          <CustomUl
-            // Motion props
-            initial={{ opacity: 0, y: "-100%" }}
-            animate={{ opacity: 1, y: "0" }}
-            exit={{ opacity: 0 }}
-            // Chakra props
-            position="absolute"
-            top="12"
-            right="0"
-            left="0"
-            zIndex="dropdown"
-            bgColor="blackAlpha.700"
-            borderRadius="md"
-            overflow="hidden"
-          >
-            {options.map((o) => (
-              <Box
-                key={o.value}
-                p={2}
-                w="full"
-                cursor="pointer"
-                _hover={{ bgColor: "chakra-border-color" }}
-                _active={{ bgColor: "gray.600" }}
-                transition="all"
-                transitionDuration="150ms"
-                onClick={() => append(o)}
-                bgColor={
-                  selected.includes(o) ? "blackAlpha.700" : "transparent"
-                }
-              >
-                {o.label}
+        {showOptions && (
+          <>
+            <CustomUl
+              // Motion props
+              initial={{ opacity: 0, y: "-100%" }}
+              animate={{ opacity: 1, y: "0" }}
+              exit={{ opacity: 0 }}
+              // Chakra props
+              position="absolute"
+              top="12"
+              right="0"
+              left="0"
+              zIndex="dropdown"
+              bgColor="blackAlpha.700"
+              borderRadius="md"
+              overflow="hidden"
+            >
+              <Box p="2">
+                <NewPopover onNew={onNew} />
               </Box>
-            ))}
-          </CustomUl>
+
+              <Divider />
+              {options.map((o) => (
+                <Box
+                  key={o.value}
+                  p={2}
+                  w="full"
+                  cursor="pointer"
+                  _hover={{ bgColor: "chakra-border-color" }}
+                  _active={{ bgColor: "gray.600" }}
+                  transition="all"
+                  transitionDuration="150ms"
+                  onClick={() => append(o)}
+                  bgColor={
+                    selected.includes(o) ? "blackAlpha.700" : "transparent"
+                  }
+                >
+                  {o.label}
+                </Box>
+              ))}
+            </CustomUl>
+          </>
         )}
       </AnimatePresence>
     </Box>
+  );
+};
+const NewPopover = ({ onNew }: { onNew: (value: string) => void }) => {
+  const [newValue, setNewValue] = useState("");
+  return (
+    <Popover placement="top">
+      <PopoverTrigger>
+        <Button colorScheme="teal">New</Button>
+      </PopoverTrigger>
+
+      <Portal>
+        <PopoverContent>
+          <PopoverHeader>
+            <PopoverCloseButton />
+          </PopoverHeader>
+
+          <PopoverBody display="flex" gap="2">
+            <Input
+              placeholder="hashtag"
+              value={newValue}
+              onChange={(e) => setNewValue(e.target.value)}
+            />
+
+            <Flex>
+              <IconButton
+                icon={<Plus />}
+                aria-label="create hashtag"
+                onClick={() => onNew(newValue)}
+              />
+            </Flex>
+          </PopoverBody>
+        </PopoverContent>
+      </Portal>
+    </Popover>
   );
 };
 
