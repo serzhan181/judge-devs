@@ -58,9 +58,16 @@ export const Card: FC<CardProps> = ({
       backgroundColor="blackAlpha.500"
       whileHover={{ y: "-2%" }}
       _hover={{ borderColor: "whiteAlpha.500" }}
+      h="40"
     >
       <Flex justifyContent="center">
-        <Image src={imageSrc} alt={name} width={200} height={200} />
+        <Image
+          style={{ objectFit: "contain" }}
+          src={imageSrc}
+          alt={name}
+          width={245}
+          height={250}
+        />
       </Flex>
 
       <Stack w="full">

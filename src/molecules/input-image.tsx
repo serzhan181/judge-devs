@@ -49,7 +49,7 @@ export const InputImage: FC<InputImageProps> = ({
             src={previewUrl}
             alt="uploaded image"
             fill
-            style={{ objectFit: "cover" }}
+            style={{ objectFit: "contain" }}
           />
         </>
       ) : (
