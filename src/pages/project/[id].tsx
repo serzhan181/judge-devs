@@ -7,6 +7,7 @@ import {
   Link as ChakraLink,
   Tag,
   Highlight,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -55,8 +56,10 @@ const Project = () => {
                 flexDir="column"
                 flexBasis={project.image ? "60%" : "100%"}
               >
-                <Flex gap={5}>
-                  <Heading>{project.name}</Heading>
+                <SimpleGrid gap={5}>
+                  <Flex>
+                    <Heading>{project.name}</Heading>
+                  </Flex>
 
                   {project.average_rating && (
                     <Flex gap={2} alignItems="center">
@@ -77,7 +80,7 @@ const Project = () => {
                       <Divider orientation="vertical" />
                     </Flex>
                   )}
-                </Flex>
+                </SimpleGrid>
 
                 {project.inspired && (
                   <Flex my="2">

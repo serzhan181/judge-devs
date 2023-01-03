@@ -1,4 +1,4 @@
-import { Plus, X, Menu as MenuIcon } from "react-feather";
+import { Plus, Search as SearchIcon } from "react-feather";
 import {
   Box,
   Flex,
@@ -9,6 +9,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Icon,
   useDisclosure,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
@@ -23,26 +24,20 @@ import { useRouter } from "next/router";
 const AuthorizeModal = dynamic(() =>
   import("@/src/modals/authorize-modal").then((c) => c.AuthorizeModal)
 );
+const MobileSearchModal = dynamic(() =>
+  import("@/src/modals/mobile-search-modal").then((c) => c.MobileSearchModal)
+);
 
 export const Header = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
     <>
       <Box bg="blackAlpha.700" px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-          <IconButton
-            size={"md"}
-            icon={isOpen ? <X /> : <MenuIcon />}
-            aria-label={"Open Menu"}
-            display={{ md: "none", sm: "flex" }}
-            justifyContent="center"
-            alignItems="center"
-            onClick={isOpen ? onClose : onOpen}
-          />
           <HStack w="6xl" spacing={8} alignItems={"center"}>
             <Box>
-              <NextLink href="/">Logo</NextLink>
+              <NextLink href="/">👩‍⚖️</NextLink>
             </Box>
             <HStack
               as={"nav"}
@@ -54,6 +49,16 @@ export const Header = () => {
                 <Search />
               </Box>
             </HStack>
+
+            <Box display={{ md: "none" }}>
+              <IconButton
+                icon={<Icon as={SearchIcon} />}
+                aria-label="Search icon"
+                onClick={onOpen}
+              />
+
+              <MobileSearchModal isOpen={isOpen} onClose={onClose} />
+            </Box>
           </HStack>
           <Flex alignItems={"center"}>
             <Actions />

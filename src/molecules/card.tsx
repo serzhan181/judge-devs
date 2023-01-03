@@ -18,6 +18,7 @@ import { Hashtag } from "../atoms/hashtag";
 import { StyledNextLink } from "../atoms/styled-next-link";
 import { useRouter } from "next/router";
 import { MoreVertical } from "react-feather";
+import { motion } from "framer-motion";
 
 type Action = {
   label: string;
@@ -50,12 +51,17 @@ export const Card: FC<CardProps> = ({
 
   return (
     <ChakraCard
+      as={motion.div}
       direction={{ base: "column", sm: "row" }}
       overflow="hidden"
       variant="outline"
       backgroundColor="blackAlpha.500"
+      whileHover={{ y: "-2%" }}
+      _hover={{ borderColor: "whiteAlpha.500" }}
     >
-      <Image src={imageSrc} alt={name} width={200} height={200} />
+      <Flex justifyContent="center">
+        <Image src={imageSrc} alt={name} width={200} height={200} />
+      </Flex>
 
       <Stack w="full">
         <CardBody display="flex" justifyContent="space-between">

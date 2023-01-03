@@ -18,15 +18,9 @@ import {
   Tbody,
   Button,
   SimpleGrid,
-  Card,
-  CardBody,
-  Badge,
-  Text,
-  Divider,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC } from "react";
 
 const Inspiration = () => {
   const router = useRouter();
@@ -56,12 +50,24 @@ const Inspiration = () => {
               creatorName={data.user.name}
             />
 
-            <SimpleGrid h="80" columns={2} spacing="3">
-              <Flex flexDir="column" gap="2">
-                <Flex justifyContent="space-between">
+            <SimpleGrid
+              h={{ base: "550px", md: "80" }}
+              columns={{ base: 1, md: 2 }}
+              spacing="3"
+            >
+              <Flex flexDir="column" gap="2" h="min-content">
+                <Flex
+                  flexWrap={{ base: "wrap", md: "initial" }}
+                  justifyContent="space-between"
+                  gap={{ base: "2" }}
+                >
                   <Heading>{data.name}</Heading>
 
-                  <Button colorScheme="teal" onClick={redirectToImplementation}>
+                  <Button
+                    colorScheme="teal"
+                    onClick={redirectToImplementation}
+                    w={{ base: "full", md: "fit-content" }}
+                  >
                     Implement 🎉
                   </Button>
                 </Flex>
@@ -69,7 +75,9 @@ const Inspiration = () => {
                 <Description description={data.description} />
               </Flex>
 
-              <Features inspirationId={data.id} />
+              <Flex>
+                <Features inspirationId={data.id} />
+              </Flex>
             </SimpleGrid>
 
             <Flex flexDir="column" gap="5">

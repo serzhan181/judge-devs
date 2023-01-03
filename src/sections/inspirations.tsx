@@ -30,7 +30,7 @@ export const InspirationSection = () => {
           <Spinner />
         </Flex>
       ) : (
-        <SimpleGrid w="full" columns={3} spacing={3}>
+        <SimpleGrid w="full" columns={{ base: 1, md: 3 }} spacing={3}>
           {inspirations?.map((insp) => (
             <InspirationCard
               key={insp.id}

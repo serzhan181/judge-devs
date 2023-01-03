@@ -75,6 +75,7 @@ export const getStaticProps: GetStaticProps = async () => {
   await ssg.project.getAll.prefetchInfinite({
     sort: { by: "newest", order: "desc" },
   });
+  await ssg.inspiration.getAll.prefetch();
 
   return {
     props: {
