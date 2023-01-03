@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "./../trpc";
+import { prisma } from "@/src/server/db/client";
 
 export const featuresRouter = router({
   addTo: protectedProcedure

@@ -81,7 +81,7 @@ export const projectRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const alreadyRated = await prisma?.rating.findFirst({
+      const alreadyRated = await prisma?.rating?.findFirst({
         where: { projectId: input.projectId, userId: ctx.session.user.id },
       });
 
@@ -168,7 +168,7 @@ export const projectRouter = router({
         userRate = rated ? rated.value : null;
       }
 
-      const totalRatingCount = await prisma.rating.count({
+      const totalRatingCount = await prisma?.rating.count({
         where: { projectId: input.id },
       });
 
@@ -231,47 +231,48 @@ export const projectRouter = router({
       // Search
       const { hashtags, searchText } = sortSearchTerm(input?.searchTerm || "");
 
-      const projects = await prisma?.project.findMany({
-        // --- Pagination ---
-        take,
-        cursor,
-        skip: input?.cursor ? 1 : 0,
-        // --- Pagination ---
+      const projects =
+        (await prisma?.project.findMany({
+          // --- Pagination ---
+          take,
+          cursor,
+          skip: input?.cursor ? 1 : 0,
+          // --- Pagination ---
 
-        // --- Sorting ---
-        orderBy: sortQuery,
+          // --- Sorting ---
+          orderBy: sortQuery,
 
-        where:
-          searchText || hashtags.length
-            ? {
-                name: { contains: searchText, mode: "insensitive" },
+          where:
+            searchText || hashtags.length
+              ? {
+                  name: { contains: searchText, mode: "insensitive" },
 
-                AND: hashtags.length
-                  ? {
-                      hashtags: {
-                        some: { name: { in: hashtags } },
-                      },
-                    }
-                  : {},
-              }
-            : {},
-        // --- Sorting ---
+                  AND: hashtags.length
+                    ? {
+                        hashtags: {
+                          some: { name: { in: hashtags } },
+                        },
+                      }
+                    : {},
+                }
+              : {},
+          // --- Sorting ---
 
-        // --- Selection ---
-        select: {
-          id: true,
-          image: true,
-          name: true,
-          user: {
-            select: {
-              name: true,
+          // --- Selection ---
+          select: {
+            id: true,
+            image: true,
+            name: true,
+            user: {
+              select: {
+                name: true,
+              },
             },
-          },
 
-          hashtags: { select: { name: true, id: true } },
-        },
-        // --- Selection ---
-      });
+            hashtags: { select: { name: true, id: true } },
+          },
+          // --- Selection ---
+        })) || [];
 
       const nextCursor =
         projects.length < take ? undefined : projects[take - 1]?.id;
@@ -324,7 +325,7 @@ export const projectRouter = router({
     }),
 
   deleteById: ownerProtectedProcedure.mutation(async ({ input }) => {
-    await prisma.project.delete({ where: { id: input.projectId } });
+    await prisma?.project.delete({ where: { id: input.projectId } });
     return "deleted";
   }),
 });

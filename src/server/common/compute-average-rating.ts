@@ -1,3 +1,5 @@
+import { prisma } from "@/src/server/db/client";
+
 export const computeAverageRating = async (projectId: string) => {
   let average_rating = null;
 

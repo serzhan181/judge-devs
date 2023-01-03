@@ -1,6 +1,6 @@
 import { protectedProcedure, publicProcedure, router } from "./../trpc";
-import { prisma } from "@/src/server/db/client";
 import { z } from "zod";
+import { prisma } from "@/src/server/db/client";
 
 export const inspirationRouter = router({
   create: protectedProcedure
@@ -11,7 +11,7 @@ export const inspirationRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await prisma.inspiration.create({
+      return await prisma?.inspiration.create({
         data: {
           name: input.name,
           description: input.description,
@@ -21,7 +21,7 @@ export const inspirationRouter = router({
     }),
 
   getAll: publicProcedure.query(async () => {
-    return await prisma.inspiration.findMany({
+    return await prisma?.inspiration.findMany({
       select: {
         user: {
           select: { name: true },
@@ -40,7 +40,7 @@ export const inspirationRouter = router({
   getByIdShort: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      return await prisma.inspiration.findUnique({
+      return await prisma?.inspiration.findUnique({
         where: { id: input.id },
         select: { id: true, name: true },
       });
@@ -49,7 +49,7 @@ export const inspirationRouter = router({
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      return await prisma.inspiration.findUnique({
+      return await prisma?.inspiration.findUnique({
         where: { id: input.id },
         include: {
           user: true,
