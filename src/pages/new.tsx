@@ -88,17 +88,16 @@ const NewProject: FC<
   };
   // Handle Image ***********
 
-  const { control, handleSubmit, setValue, formState } =
-    useForm<CreateProjectForm>({
-      resolver: zodResolver(FormSchema),
+  const { control, handleSubmit, setValue } = useForm<CreateProjectForm>({
+    resolver: zodResolver(FormSchema),
 
-      defaultValues: {
-        name: isEditMode ? editProject?.name : "",
-        description: (isEditMode && editProject?.description) || "",
-        source_code_url: isEditMode ? editProject?.source_code_url : "",
-        live_demo_url: "",
-      },
-    });
+    defaultValues: {
+      name: isEditMode ? editProject?.name : "",
+      description: (isEditMode && editProject?.description) || "",
+      source_code_url: isEditMode ? editProject?.source_code_url : "",
+      live_demo_url: "",
+    },
+  });
 
   const [fetchingREADME, setFetchingREADME] = useState(false);
 
