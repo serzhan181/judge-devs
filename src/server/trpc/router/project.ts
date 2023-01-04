@@ -266,6 +266,7 @@ export const projectRouter = router({
             user: {
               select: {
                 name: true,
+                id: true,
               },
             },
 
@@ -328,4 +329,18 @@ export const projectRouter = router({
     await prisma?.project.delete({ where: { id: input.projectId } });
     return "deleted";
   }),
+
+  update: ownerProtectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await prisma.project.update({
+        where: { id: input.projectId },
+        data: { name: input.name, description: input.description },
+      });
+    }),
 });
