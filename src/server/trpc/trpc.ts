@@ -1,6 +1,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
+import { prisma } from "@/src/server/db/client";
 
 import { type Context } from "./context";
 
