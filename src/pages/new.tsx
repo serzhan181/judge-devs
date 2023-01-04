@@ -26,6 +26,7 @@ import { getBase64 } from "../utils/get-base-64";
 import { FormInput } from "@/src/atoms/form-input";
 import { StyledNextLink } from "../atoms/styled-next-link";
 import { getSession } from "next-auth/react";
+import { prisma } from "@/src/server/db/client";
 
 const FormSchema = z.object({
   name: z.string().min(5),
