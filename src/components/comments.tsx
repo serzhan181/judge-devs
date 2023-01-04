@@ -45,6 +45,7 @@ export const Comments: FC<CommentsProps> = ({ projectId }) => {
                 username={c.user.name || "Unknown"}
                 body={c.body}
                 createdAt={c.createdAt}
+                userId={c.user.id}
               />
             ))}
 
@@ -55,6 +56,7 @@ export const Comments: FC<CommentsProps> = ({ projectId }) => {
                 username={c.user.name || "Unknown"}
                 body={c.body}
                 createdAt={c.createdAt}
+                userId={c.user.id}
               />
             ))}
           </>
@@ -68,6 +70,7 @@ type CommentProps = {
   userImage: string;
   username: string;
   body: string;
+  userId: string;
 
   createdAt: Date;
 };
@@ -77,6 +80,7 @@ const Comment: FC<CommentProps> = ({
   username,
   body,
   createdAt,
+  userId,
 }) => {
   return (
     <Flex gap={3}>
@@ -85,7 +89,7 @@ const Comment: FC<CommentProps> = ({
       </Box>
       <Flex flexDir="column" gap={1.5}>
         <Flex gap={1} alignItems="center">
-          <StyledNextLink href="user/42">u/{username}</StyledNextLink>
+          <StyledNextLink href={`user/${userId}`}>u/{username}</StyledNextLink>
 
           <Text color="gray" as="span">
             &#8226;

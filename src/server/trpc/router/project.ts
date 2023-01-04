@@ -266,6 +266,7 @@ export const projectRouter = router({
             user: {
               select: {
                 name: true,
+                id: true,
               },
             },
 
@@ -314,7 +315,7 @@ export const projectRouter = router({
           id: true,
 
           user: {
-            select: { name: true },
+            select: { name: true, id: true },
           },
 
           hashtags: { select: { name: true } },

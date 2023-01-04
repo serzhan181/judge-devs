@@ -48,6 +48,7 @@ const Inspiration = () => {
               createdAt={data.createdAt}
               creatorImage={data.user.image}
               creatorName={data.user.name}
+              userId={data.user.id}
             />
 
             <SimpleGrid

@@ -21,7 +21,7 @@ export const commentRouter = router({
         select: {
           body: true,
           createdAt: true,
-          user: { select: { name: true, image: true } },
+          user: { select: { name: true, image: true, id: true } },
           id: true,
         },
 
@@ -36,7 +36,7 @@ export const commentRouter = router({
           select: {
             body: true,
             createdAt: true,
-            user: { select: { name: true, image: true } },
+            user: { select: { name: true, image: true, id: true } },
             id: true,
           },
 

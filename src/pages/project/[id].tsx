@@ -48,6 +48,7 @@ const Project = () => {
               creatorName={project.user.name}
               creatorImage={project.user.image}
               createdAt={project.createdAt}
+              userId={project.user.id}
             />
 
             <Flex gap={3}>

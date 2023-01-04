@@ -7,6 +7,7 @@ import { fromNow } from "../utils/fromNow";
 type MetaDataProps = {
   creatorImage: string | null;
   creatorName: string | null;
+  userId: string;
 
   createdAt?: Date;
 };
@@ -15,6 +16,7 @@ export const MetaData: FC<MetaDataProps> = ({
   creatorName,
   creatorImage,
   createdAt,
+  userId,
 }) => {
   return (
     <Flex gap={2}>
@@ -25,7 +27,9 @@ export const MetaData: FC<MetaDataProps> = ({
           height={25}
           alt={"creator"}
         />
-        <StyledNextLink href="/user/42">u/{creatorName}</StyledNextLink>
+        <StyledNextLink href={`/user/${userId}`}>
+          u/{creatorName}
+        </StyledNextLink>
       </Flex>
       {createdAt && (
         <>
