@@ -82,9 +82,15 @@ export const InputImage: FC<InputImageProps> = ({
   );
 };
 
-export const useInputImg = () => {
+type UseInputImgParams = {
+  defaultValues?: {
+    fileUrl?: string;
+  };
+};
+
+export const useInputImg = ({ defaultValues }: UseInputImgParams) => {
   const [file, setFile] = useState<File | undefined>();
-  const [fileUrl, setFileUrl] = useState("");
+  const [fileUrl, setFileUrl] = useState(defaultValues?.fileUrl || "");
 
   const handlePreviewImg = (file: File | undefined) => {
     if (!file) return "";

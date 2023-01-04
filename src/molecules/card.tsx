@@ -20,10 +20,11 @@ import { useRouter } from "next/router";
 import { MoreVertical } from "react-feather";
 import { motion } from "framer-motion";
 
-type Action = {
+export type Action = {
   label: string;
-  onClick: () => void;
+  onClick: (id: string) => void;
   type?: "danger" | "default";
+  disabled?: boolean;
 };
 
 type CardProps = {
@@ -86,7 +87,7 @@ export const Card: FC<CardProps> = ({
             <StyledNextLink href="/user/42">u/{username}</StyledNextLink>
           </Flex>
 
-          {actions?.length && (
+          {Boolean(actions?.length) && (
             <Flex>
               <Menu isLazy>
                 <MenuButton
@@ -97,8 +98,12 @@ export const Card: FC<CardProps> = ({
                 />
 
                 <MenuList>
-                  {actions.map((a) => (
-                    <MenuItem key={a.label} onClick={a.onClick}>
+                  {actions?.map((a) => (
+                    <MenuItem
+                      key={a.label}
+                      onClick={() => a.onClick(id)}
+                      disabled={true}
+                    >
                       <Text color={a?.type === "danger" ? "red" : "current"}>
                         {a.label}
                       </Text>

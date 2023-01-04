@@ -200,7 +200,10 @@ const NewPopover = ({ onNew }: { onNew: (value: string) => void }) => {
               <IconButton
                 icon={<Plus />}
                 aria-label="create hashtag"
-                onClick={() => onNew(newValue)}
+                onClick={() => {
+                  onNew(newValue);
+                  setNewValue("");
+                }}
               />
             </Flex>
           </PopoverBody>
