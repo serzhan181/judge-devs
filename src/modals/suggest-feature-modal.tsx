@@ -4,13 +4,11 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  ModalProps,
   useToast,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { z } from "zod";
 import { FormInput } from "../atoms/form-input";
 import { useForm } from "react-hook-form";

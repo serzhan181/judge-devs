@@ -3,6 +3,8 @@ import { Features } from "@/src/components/features";
 import { DefaultLayout } from "@/src/layouts/default";
 import { Description } from "@/src/molecules/description";
 import { MetaData } from "@/src/molecules/meta-data";
+import { createContextInner } from "@/src/server/trpc/context";
+import { appRouter } from "@/src/server/trpc/router/_app";
 import { fromNow } from "@/src/utils/fromNow";
 import { trpc } from "@/src/utils/trpc";
 import {
@@ -19,22 +21,24 @@ import {
   Button,
   SimpleGrid,
 } from "@chakra-ui/react";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import type {
+  GetStaticPaths,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import Link from "next/link";
+import { prisma } from "@/src/server/db/client";
 
-const Inspiration = () => {
-  const router = useRouter();
-  const inspiredById = (router.query.id as string) || "";
+const Inspiration = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const inspiredById = props.id || "";
   const { data, isLoading } = trpc.inspiration.getById.useQuery(
     { id: inspiredById },
     {
       enabled: Boolean(inspiredById),
     }
   );
-
-  const redirectToImplementation = () => {
-    router.push(`/new?inspired_by=${inspiredById}`);
-  };
 
   return (
     <>
@@ -65,8 +69,9 @@ const Inspiration = () => {
 
                   <Button
                     colorScheme="teal"
-                    onClick={redirectToImplementation}
                     w={{ base: "full", md: "fit-content" }}
+                    as={Link}
+                    href={`/new?inspired_by=${inspiredById}`}
                   >
                     Implement 🎉
                   </Button>
@@ -131,3 +136,39 @@ const Inspiration = () => {
 };
 
 export default Inspiration;
+
+export const getStaticProps = async (
+  ctx: GetStaticPropsContext<{ id: string }>
+) => {
+  const ssg = createProxySSGHelpers({
+    router: appRouter,
+    ctx: await createContextInner({ session: null }),
+  });
+
+  const id = ctx.params?.id;
+
+  id && (await ssg.inspiration.getById.prefetch({ id }));
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      id,
+    },
+    revalidate: 5,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const insps = await prisma?.inspiration.findMany({
+    select: { id: true },
+  });
+
+  return {
+    paths:
+      insps?.map((insp) => ({
+        params: { id: insp.id },
+      })) || [],
+
+    fallback: "blocking",
+  };
+};

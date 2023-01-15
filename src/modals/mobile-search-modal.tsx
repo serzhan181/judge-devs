@@ -1,12 +1,5 @@
-import {
-  Box,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import { FC } from "react";
+import { Box, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react";
+import type { FC } from "react";
 import { Search } from "../components/search";
 
 type MobileSearchModalProps = {

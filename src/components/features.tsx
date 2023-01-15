@@ -16,7 +16,8 @@ import {
   shouldForwardProp,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { trpc } from "../utils/trpc";
 import { AnimatePresence, isValidMotionProp, motion } from "framer-motion";
 import { ArrowLeft } from "react-feather";
