@@ -6,9 +6,8 @@ import type {
 } from "next";
 import Head from "next/head";
 import { prisma } from "@/src/server/db/client";
-import { Container, Flex, Box, Heading, Text } from "@chakra-ui/react";
+import { Flex, Box, Heading, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import { RoundedImage } from "@/src/atoms/rounded-image";
 import { fromNow } from "@/src/utils/fromNow";
 import { Card } from "@/src/molecules/card";
 

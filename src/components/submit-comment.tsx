@@ -56,6 +56,7 @@ export const SubmitComment: FC<SubmitCommentProps> = ({
           user: {
             image: session.data?.user?.image || null,
             name: session.data?.user?.name || null,
+            id: session.data?.user?.id || "",
           },
         };
 
