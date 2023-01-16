@@ -55,6 +55,7 @@ const Project = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               creatorName={project.user.name}
               creatorImage={project.user.image}
               createdAt={project.createdAt}
+              userId={project.user.id}
             />
 
             <Flex gap={3}>

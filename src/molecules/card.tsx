@@ -36,6 +36,7 @@ type CardProps = {
     id: string;
     name: string;
   }[];
+  userId: string;
 
   actions?: Action[];
 };
@@ -47,6 +48,7 @@ export const Card: FC<CardProps> = ({
   hashtags,
   id,
   actions,
+  userId,
 }) => {
   const router = useRouter();
 
@@ -84,7 +86,9 @@ export const Card: FC<CardProps> = ({
               <StyledNextLink href={`/project/${id}`}>{name}</StyledNextLink>
             </Heading>
 
-            <StyledNextLink href="/user/42">u/{username}</StyledNextLink>
+            <StyledNextLink href={`/user/${userId}`}>
+              u/{username}
+            </StyledNextLink>
           </Flex>
 
           {Boolean(actions?.length) && (

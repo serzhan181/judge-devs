@@ -192,6 +192,7 @@ const MoreInfo: FC<MoreInfoProps> = ({ goBack, featureId }) => {
               <MetaData
                 creatorImage={data?.user.image}
                 creatorName={data.user.name}
+                userId={data.user.id}
               />
             </Box>
 

@@ -108,6 +108,7 @@ export const ProjectsSection = () => {
                       username={p.user.name || ""}
                       hashtags={p.hashtags}
                       actions={actions}
+                      userId={p.user.id}
                       id={p.id}
                     />
                   );

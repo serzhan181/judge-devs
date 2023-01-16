@@ -25,6 +25,7 @@ const InputWithOptions = withInputOptions<{
 
   user: {
     name: string | null;
+    id: string;
   };
 
   hashtags: {
@@ -92,6 +93,7 @@ export const Search = () => {
                   name={o.name}
                   username={o.user.name}
                   projectId={o.id}
+                  userId={o.user.id}
                 />
               )}
             />
@@ -118,9 +120,16 @@ type OptionProps = {
   username: string | null;
   projectId: string;
   hashtags: { name: string }[];
+  userId: string;
 };
 
-const Option = ({ name, username, hashtags, projectId }: OptionProps) => {
+const Option = ({
+  name,
+  username,
+  hashtags,
+  projectId,
+  userId,
+}: OptionProps) => {
   return (
     <Flex
       _hover={{ backgroundColor: "gray.800" }}
@@ -133,7 +142,7 @@ const Option = ({ name, username, hashtags, projectId }: OptionProps) => {
           {name}
         </StyledNextLink>
 
-        <StyledNextLink href={`/user/42`}>u/{username}</StyledNextLink>
+        <StyledNextLink href={`/user/${userId}`}>u/{username}</StyledNextLink>
       </Flex>
 
       <div>

@@ -24,7 +24,7 @@ export const inspirationRouter = router({
     return await prisma?.inspiration.findMany({
       select: {
         user: {
-          select: { name: true },
+          select: { name: true, id: true },
         },
 
         name: true,

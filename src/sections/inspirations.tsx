@@ -38,6 +38,7 @@ export const InspirationSection = () => {
               username={insp.user.name || "Unknown"}
               implementedCount={insp.implemented.length}
               createdAt={insp.createdAt}
+              userId={insp.user.id}
               id={insp.id}
             />
           ))}
@@ -53,6 +54,7 @@ type InspirationCardProps = {
   username: string;
   implementedCount: number;
   createdAt: Date;
+  userId: string;
 };
 
 const InspirationCard: FC<InspirationCardProps> = ({
@@ -60,6 +62,7 @@ const InspirationCard: FC<InspirationCardProps> = ({
   username,
   implementedCount,
   createdAt,
+  userId,
   id,
 }) => {
   return (
@@ -76,7 +79,7 @@ const InspirationCard: FC<InspirationCardProps> = ({
         </Flex>
       </CardHeader>
       <CardBody display="flex" justifyContent="space-between">
-        <StyledNextLink href="/user/42">u/{username}</StyledNextLink>
+        <StyledNextLink href={`/user/${userId}`}>u/{username}</StyledNextLink>
 
         <Flex alignSelf="flex-end">
           <Text fontSize="sm" color="gray">
