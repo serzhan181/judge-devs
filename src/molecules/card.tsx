@@ -20,10 +20,11 @@ import { useRouter } from "next/router";
 import { MoreVertical } from "react-feather";
 import { motion } from "framer-motion";
 
-type Action = {
+export type Action = {
   label: string;
-  onClick: () => void;
+  onClick: (id: string) => void;
   type?: "danger" | "default";
+  disabled?: boolean;
 };
 
 type CardProps = {
@@ -60,15 +61,21 @@ export const Card: FC<CardProps> = ({
       backgroundColor="blackAlpha.500"
       whileHover={{ y: "-2%" }}
       _hover={{ borderColor: "whiteAlpha.500" }}
-      h="40"
+      h={{ base: "full", md: "40" }}
     >
-      <Flex justifyContent="center">
+      <Flex
+        justifyContent={{ base: "center", md: "center" }}
+        w={{ base: "full", md: "64" }}
+      >
         <Image
-          style={{ objectFit: "contain" }}
+          style={{ objectFit: "contain", width: "auto", height: "auto" }}
           src={imageSrc}
           alt={name}
           width={245}
           height={250}
+          sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              33vw"
         />
       </Flex>
 
@@ -84,7 +91,7 @@ export const Card: FC<CardProps> = ({
             </StyledNextLink>
           </Flex>
 
-          {actions?.length && (
+          {Boolean(actions?.length) && (
             <Flex>
               <Menu isLazy>
                 <MenuButton
@@ -95,8 +102,12 @@ export const Card: FC<CardProps> = ({
                 />
 
                 <MenuList>
-                  {actions.map((a) => (
-                    <MenuItem key={a.label} onClick={a.onClick}>
+                  {actions?.map((a) => (
+                    <MenuItem
+                      key={a.label}
+                      onClick={() => a.onClick(id)}
+                      disabled={true}
+                    >
                       <Text color={a?.type === "danger" ? "red" : "current"}>
                         {a.label}
                       </Text>

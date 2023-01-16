@@ -1,5 +1,6 @@
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import type { FC } from "react";
 import { Fragment, useEffect } from "react";
@@ -7,10 +8,12 @@ import type { SortByOptions } from "../components/sort-all-projects-tabs";
 import { SortAllProjectsTabs } from "../components/sort-all-projects-tabs";
 import { useIntersection } from "../hooks/use-intersection";
 import { useLocalStorage } from "../hooks/use-local-storage";
+import type { Action } from "../molecules/card";
 import { Card } from "../molecules/card";
 import { trpc } from "../utils/trpc";
 
 export const ProjectsSection = () => {
+  const session = useSession();
   const router = useRouter();
   const trpcContext = trpc.useContext();
 
@@ -81,21 +84,35 @@ export const ProjectsSection = () => {
                     searchText={search as string}
                   />
                 )}
-                {projects.map((p) => (
-                  <Card
-                    key={p.id}
-                    imageSrc={
-                      p.image
-                        ? p.image
-                        : "/static/images/website-placeholder.jpg"
-                    }
-                    name={p.name}
-                    username={p.user.name || ""}
-                    hashtags={p.hashtags}
-                    userId={p.user.id}
-                    id={p.id}
-                  />
-                ))}
+                {projects.map((p) => {
+                  const isOwner = p.user.id === session.data?.user?.id;
+
+                  const actions: Action[] = isOwner
+                    ? [
+                        {
+                          label: "Edit",
+                          onClick: (id) => router.push(`/new?edit=${id}`),
+                        },
+                      ]
+                    : [];
+
+                  return (
+                    <Card
+                      key={p.id}
+                      imageSrc={
+                        p.image
+                          ? p.image
+                          : "/static/images/website-placeholder.jpg"
+                      }
+                      name={p.name}
+                      username={p.user.name || ""}
+                      hashtags={p.hashtags}
+                      actions={actions}
+                      userId={p.user.id}
+                      id={p.id}
+                    />
+                  );
+                })}
               </>
             ) : (
               isLoading && (

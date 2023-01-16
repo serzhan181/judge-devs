@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useEffect, useState } from "react";
-import { Option } from "../molecules/multiselect";
+import type { Option } from "../molecules/multiselect";
 import { Multiselect } from "../molecules/multiselect";
 import { trpc } from "@/src/utils/trpc";
 import { useIntersection } from "../hooks/use-intersection";
@@ -14,21 +14,27 @@ export const HashtagsSelect: FC<HashtagsSelectProps> = ({
   onHashtagsSelect,
 }) => {
   const { ref, isVisible } = useIntersection();
-  const { options } = useGetHashtagsAsOptions({ enabled: Boolean(isVisible) });
-  const [curOptions, setCurOptions] = useState<Option[]>(options);
+  const { options, setOptions } = useGetHashtagsAsOptions({
+    enabled: Boolean(isVisible),
+  });
 
   const optionsToStringArr = (options: Option[]) => options.map((o) => o.value);
 
   const onCreateNewHashtag = (value: string) => {
     const depoluted = cleanStr(value).replace(/#+/g, "");
 
-    setCurOptions((prev) => [...prev, { label: depoluted, value: depoluted }]);
+    if (options.some((o) => o.value === depoluted)) return;
+
+    setOptions((prev) => [
+      ...prev,
+      { label: `#${depoluted}`, value: depoluted },
+    ]);
   };
 
   return (
     <div ref={ref}>
       <Multiselect
-        options={curOptions}
+        options={options}
         placeholder="Add hashtags"
         onMultiSelect={(options) =>
           onHashtagsSelect(optionsToStringArr(options))
@@ -55,7 +61,8 @@ const useGetHashtagsAsOptions = ({ enabled }: { enabled: boolean }) => {
       : [];
 
     setOptions(appropriateHashtagsToOptions);
+    console.log(appropriateHashtagsToOptions);
   }, [hashtags]);
 
-  return { options, isLoading };
+  return { options, setOptions, isLoading };
 };

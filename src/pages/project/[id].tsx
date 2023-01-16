@@ -9,7 +9,6 @@ import {
   Highlight,
   SimpleGrid,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import Head from "next/head";
 import { trpc } from "@/src/utils/trpc";
 import type { FC } from "react";
@@ -22,10 +21,18 @@ import { RateProject, useRateProject } from "@/src/components/rate-project";
 import { Description } from "@/src/molecules/description";
 import { MetaData } from "@/src/molecules/meta-data";
 import Link from "next/link";
+import type {
+  GetStaticPaths,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from "next";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { createContextInner } from "@/src/server/trpc/context";
+import { appRouter } from "@/src/server/trpc/router/_app";
+import { prisma } from "@/src/server/db/client";
 
-const Project = () => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
+const Project = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const projectId = props.id || "";
   const session = useSession();
 
   const { data: project, isLoading } = trpc.project.getProjectById.useQuery({
@@ -181,3 +188,41 @@ const Links: FC<LinksProps> = ({ sourceCodeUrl, liveDemoUrl }) => {
 };
 
 export default Project;
+
+export const getStaticProps = async (
+  ctx: GetStaticPropsContext<{ id: string }>
+) => {
+  const ssg = createProxySSGHelpers({
+    router: appRouter,
+    ctx: await createContextInner({ session: null }),
+  });
+
+  const id = ctx.params?.id;
+
+  id && (await ssg.project.getProjectById.prefetch({ id }));
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      id,
+    },
+    revalidate: 5,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await prisma?.project.findMany({
+    select: { id: true },
+  });
+
+  return {
+    paths:
+      projects?.map((p) => ({
+        params: {
+          id: p.id,
+        },
+      })) || [],
+
+    fallback: "blocking",
+  };
+};
