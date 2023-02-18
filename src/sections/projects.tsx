@@ -10,6 +10,7 @@ import { useIntersection } from "../hooks/use-intersection";
 import { useLocalStorage } from "../hooks/use-local-storage";
 import type { Action } from "../molecules/card";
 import { Card } from "../molecules/card";
+import { SideCard } from "../molecules/side-card";
 import { trpc } from "../utils/trpc";
 
 export const ProjectsSection = () => {
@@ -73,64 +74,82 @@ export const ProjectsSection = () => {
         />
       </Flex>
 
-      {data?.pages &&
-        data.pages.flatMap(({ projects, nextCursor }, i) => (
-          <Fragment key={nextCursor || i}>
-            {projects?.length && !isLoading ? (
-              <>
-                {Boolean(search.length) && (
+      <Flex gap="2">
+        <Flex gap="2" flexDir="column" flexBasis="70%">
+          {data?.pages &&
+            data.pages.flatMap(({ projects, nextCursor }, i) => (
+              <Fragment key={nextCursor || i}>
+                {projects?.length && !isLoading ? (
+                  <>
+                    {Boolean(search.length) && (
+                      <SearchStatus
+                        label="Projects with: "
+                        searchText={search as string}
+                      />
+                    )}
+                    {projects.map((p) => {
+                      const isOwner = p.user.id === session.data?.user?.id;
+
+                      const actions: Action[] = isOwner
+                        ? [
+                            {
+                              label: "Edit",
+                              onClick: (id) => router.push(`/new?edit=${id}`),
+                            },
+                          ]
+                        : [];
+
+                      return (
+                        <Card
+                          key={p.id}
+                          imageSrc={
+                            p.image
+                              ? p.image
+                              : "/static/images/website-placeholder.jpg"
+                          }
+                          name={p.name}
+                          username={p.user.name || ""}
+                          hashtags={p.hashtags}
+                          actions={actions}
+                          userId={p.user.id}
+                          id={p.id}
+                        />
+                      );
+                    })}
+                  </>
+                ) : (
+                  isLoading && (
+                    <Flex justifyContent="center">
+                      <Spinner />
+                    </Flex>
+                  )
+                )}
+
+                {/* No projects found */}
+                {!projects?.length && !isLoading && search.length && (
                   <SearchStatus
-                    label="Projects with: "
+                    label="No projects with: "
                     searchText={search as string}
                   />
                 )}
-                {projects.map((p) => {
-                  const isOwner = p.user.id === session.data?.user?.id;
+              </Fragment>
+            ))}
+        </Flex>
 
-                  const actions: Action[] = isOwner
-                    ? [
-                        {
-                          label: "Edit",
-                          onClick: (id) => router.push(`/new?edit=${id}`),
-                        },
-                      ]
-                    : [];
-
-                  return (
-                    <Card
-                      key={p.id}
-                      imageSrc={
-                        p.image
-                          ? p.image
-                          : "/static/images/website-placeholder.jpg"
-                      }
-                      name={p.name}
-                      username={p.user.name || ""}
-                      hashtags={p.hashtags}
-                      actions={actions}
-                      userId={p.user.id}
-                      id={p.id}
-                    />
-                  );
-                })}
-              </>
-            ) : (
-              isLoading && (
-                <Flex justifyContent="center">
-                  <Spinner />
-                </Flex>
-              )
-            )}
-
-            {/* No projects found */}
-            {!projects?.length && !isLoading && search.length && (
-              <SearchStatus
-                label="No projects with: "
-                searchText={search as string}
-              />
-            )}
-          </Fragment>
-        ))}
+        <Flex grow={1}>
+          <SideCard
+            title="Popular"
+            projects={[
+              {
+                averageRating: 3,
+                id: "sdfe",
+                imageSrc: "/static/images/website-placeholder.jpg",
+                name: "Project name",
+              },
+            ]}
+          />
+        </Flex>
+      </Flex>
       <Flex
         mx="auto"
         mt="3"
