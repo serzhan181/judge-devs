@@ -8,6 +8,7 @@ import {
   Flex,
   Box,
   Spinner,
+  StackDivider,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import type { FC } from "react";
@@ -43,7 +44,7 @@ export const SideCard: FC<SideCardProps> = ({ title, projects, isLoading }) => {
 
       <CardBody>
         {!isLoading ? (
-          <Stack spacing="5">
+          <Stack spacing="5" divider={<StackDivider />} align="stretch">
             {projects.map((p) => (
               <Flex
                 key={p.id}
@@ -57,7 +58,7 @@ export const SideCard: FC<SideCardProps> = ({ title, projects, isLoading }) => {
                 </Flex>
 
                 <Box>
-                  <Text>{p.averageRating} (rated)</Text>
+                  <Text>{p.averageRating} (avg)</Text>
                 </Box>
               </Flex>
             ))}
