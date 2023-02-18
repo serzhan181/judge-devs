@@ -62,6 +62,7 @@ export const Card: FC<CardProps> = ({
       whileHover={{ y: "-2%" }}
       _hover={{ borderColor: "whiteAlpha.500" }}
       h={{ base: "full", md: "40" }}
+      borderRadius="none"
     >
       <Flex
         justifyContent={{ base: "center", md: "center" }}
