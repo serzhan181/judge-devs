@@ -4,13 +4,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import type { FC } from "react";
 import { Fragment, useEffect } from "react";
+import { PopularSideCard } from "../components/popular-side-card";
 import type { SortByOptions } from "../components/sort-all-projects-tabs";
 import { SortAllProjectsTabs } from "../components/sort-all-projects-tabs";
 import { useIntersection } from "../hooks/use-intersection";
 import { useLocalStorage } from "../hooks/use-local-storage";
 import type { Action } from "../molecules/card";
 import { Card } from "../molecules/card";
-import { SideCard } from "../molecules/side-card";
 import { trpc } from "../utils/trpc";
 
 export const ProjectsSection = () => {
@@ -137,17 +137,7 @@ export const ProjectsSection = () => {
         </Flex>
 
         <Flex grow={1}>
-          <SideCard
-            title="Popular"
-            projects={[
-              {
-                averageRating: 3,
-                id: "sdfe",
-                imageSrc: "/static/images/website-placeholder.jpg",
-                name: "Project name",
-              },
-            ]}
-          />
+          <PopularSideCard />
         </Flex>
       </Flex>
       <Flex
