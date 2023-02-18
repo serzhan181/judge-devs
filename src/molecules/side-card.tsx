@@ -7,6 +7,7 @@ import {
   Text,
   Flex,
   Box,
+  Spinner,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import type { FC } from "react";
@@ -20,9 +21,10 @@ type MiniCardProps = Pick<CardProps, "name" | "imageSrc" | "id"> & {
 type SideCardProps = {
   title: string;
   projects: MiniCardProps[];
+  isLoading?: boolean;
 };
 
-export const SideCard: FC<SideCardProps> = ({ title, projects }) => {
+export const SideCard: FC<SideCardProps> = ({ title, projects, isLoading }) => {
   return (
     <ChakraCard
       height="fit-content"
@@ -40,25 +42,31 @@ export const SideCard: FC<SideCardProps> = ({ title, projects }) => {
       <Divider />
 
       <CardBody>
-        <Stack spacing="5">
-          {projects.map((p) => (
-            <Flex
-              key={p.id}
-              alignItems="center"
-              justifyContent="space-between"
-              gap="2"
-            >
-              <Flex gap="2" alignItems="center">
-                <Image src={p.imageSrc} width={55} height={55} alt={p.name} />
-                <StyledNextLink href="/">{p.name}</StyledNextLink>
-              </Flex>
+        {!isLoading ? (
+          <Stack spacing="5">
+            {projects.map((p) => (
+              <Flex
+                key={p.id}
+                alignItems="center"
+                justifyContent="space-between"
+                gap="2"
+              >
+                <Flex gap="2" alignItems="center">
+                  <Image src={p.imageSrc} width={55} height={55} alt={p.name} />
+                  <StyledNextLink href="/">{p.name}</StyledNextLink>
+                </Flex>
 
-              <Box>
-                <Text>{p.averageRating} (rated)</Text>
-              </Box>
-            </Flex>
-          ))}
-        </Stack>
+                <Box>
+                  <Text>{p.averageRating} (rated)</Text>
+                </Box>
+              </Flex>
+            ))}
+          </Stack>
+        ) : (
+          <Flex justifyContent="center">
+            <Spinner />
+          </Flex>
+        )}
       </CardBody>
     </ChakraCard>
   );

@@ -7,6 +7,7 @@ export const PopularSideCard = () => {
   return (
     <SideCard
       title="Popular projects"
+      isLoading={isLoading}
       //   THAT IS UGLY, IM SORRY I WILL CHANGE IT!!!!
       projects={
         data?.map((p) => ({
