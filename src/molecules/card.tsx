@@ -27,7 +27,7 @@ export type Action = {
   disabled?: boolean;
 };
 
-type CardProps = {
+export type CardProps = {
   name: string;
   imageSrc: string;
   username: string;

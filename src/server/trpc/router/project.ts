@@ -343,4 +343,18 @@ export const projectRouter = router({
         data: { name: input.name, description: input.description },
       });
     }),
+
+  getPopular: publicProcedure.query(async () => {
+    return await prisma.project.findMany({
+      orderBy: { ratings: { _count: "desc" } },
+      take: 3,
+
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        average_rating: true,
+      },
+    });
+  }),
 });
