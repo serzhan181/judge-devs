@@ -2,7 +2,7 @@ import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { appRouter } from "../server/trpc/router/_app";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { createServerSideHelpers } from "@trpc/react-query/server";
 import superjson from "superjson";
 import { DefaultLayout } from "@/src/layouts/default";
 import {
@@ -66,7 +66,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = () => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const ssg = createProxySSGHelpers({
+  const ssg = createServerSideHelpers({
     router: appRouter,
     ctx: await createContextInner({ session: null }),
     transformer: superjson,
